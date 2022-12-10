@@ -14,7 +14,7 @@ https://soundcloud.com/fm_freemusic
 
 ## Future Development
 
-More monsters!
+Could not get the UI to work with the AI. I tried for hours, Maybe i could figure out how to get it working later,
 
 ## Created by 
 
