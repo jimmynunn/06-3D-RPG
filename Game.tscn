@@ -1,3 +1,154 @@
-[gd_scene format=2]
+[gd_scene load_steps=16 format=2]
+
+[ext_resource path="res://Player/Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Player/Player.gd" type="Script" id=2]
+[ext_resource path="res://Terrain.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Target/Target.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Player/RayCast.gd" type="Script" id=5]
+[ext_resource path="res://NPC/NPC.tscn" type="PackedScene" id=6]
+[ext_resource path="res://NPC/NPC.gd" type="Script" id=7]
+[ext_resource path="res://UI/Dialogue.gd" type="Script" id=8]
+[ext_resource path="res://UI/UI.gd" type="Script" id=9]
+[ext_resource path="res://Drone/Drone.tscn" type="PackedScene" id=10]
+
+[sub_resource type="SpatialMaterial" id=1]
+albedo_color = Color( 1, 0, 0, 1 )
+emission_enabled = true
+emission = Color( 1, 0, 0, 1 )
+emission_energy = 3.0
+emission_operator = 0
+emission_on_uv2 = false
+
+[sub_resource type="SphereMesh" id=2]
+material = SubResource( 1 )
+radius = 0.5
+height = 1.0
+
+[sub_resource type="SphereShape" id=3]
+radius = 1.4853
+
+[sub_resource type="ProceduralSky" id=5]
+sky_top_color = Color( 0.223529, 0.0941176, 0.4, 1 )
+sun_color = Color( 0.611765, 0, 0, 1 )
+
+[sub_resource type="Environment" id=4]
+background_mode = 2
+background_sky = SubResource( 5 )
 
 [node name="Game" type="Spatial"]
+
+[node name="Player" parent="." instance=ExtResource( 1 )]
+transform = Transform( -0.370277, -0.0141541, -0.928814, -0.00524148, 0.9999, -0.0131479, 0.928907, 0, -0.370314, 47.8753, 1.08847, 4.96902 )
+script = ExtResource( 2 )
+
+[node name="Pivot" type="Position3D" parent="Player"]
+
+[node name="Camera" type="Camera" parent="Player/Pivot"]
+transform = Transform( -1, 1.51808e-08, -8.60946e-08, 0, 0.984808, 0.173648, 8.74228e-08, 0.173648, -0.984808, 0, 5, -8 )
+
+[node name="RayCast" type="RayCast" parent="Player/Pivot"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0.814826 )
+enabled = true
+cast_to = Vector3( 0, -1, 100 )
+script = ExtResource( 5 )
+
+[node name="Reticule" type="Position3D" parent="Player/Pivot/RayCast"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 50 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Player/Pivot/RayCast/Reticule"]
+mesh = SubResource( 2 )
+
+[node name="lowpoly_scene" parent="." instance=ExtResource( 3 )]
+transform = Transform( 3.5, 0, 0, 0, 3.5, 0, 0, 0, 3.5, 0, 0, 0 )
+
+[node name="Target_container" type="Spatial" parent="."]
+
+[node name="Target" parent="Target_container" instance=ExtResource( 4 )]
+transform = Transform( 4.95677, 0, 0.656091, 0, 5, 0, -0.656091, 0, 4.95677, -28.2106, 12.3043, -20.6721 )
+
+[node name="Target2" parent="Target_container" instance=ExtResource( 4 )]
+transform = Transform( 0.596547, 0, -0.802578, 0, 1, 0, 0.802578, 0, 0.596547, 15.1442, 16.0251, -21.9443 )
+
+[node name="Target3" parent="Target_container" instance=ExtResource( 4 )]
+transform = Transform( 1.91799, 0, -0.566859, 0, 2, 0, 0.566859, 0, 1.91799, -20.7565, 8.06454, -38.9831 )
+
+[node name="Target4" parent="Target_container" instance=ExtResource( 4 )]
+transform = Transform( 0.999621, 0, -0.0275204, 0, 1, 0, 0.0275204, 0, 0.999621, -3.67685, 5.90312, -44.1357 )
+
+[node name="NPC" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 45.2728, -0.06528, -9.79024 )
+script = ExtResource( 7 )
+
+[node name="Area" type="Area" parent="NPC"]
+transform = Transform( 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0.385652, -1.19868 )
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2" type="CollisionShape" parent="NPC/Area"]
+transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, -0.380566, 0.311319, 0.0118771 )
+shape = SubResource( 3 )
+
+[node name="UI" type="CanvasLayer" parent="."]
+script = ExtResource( 9 )
+
+[node name="Background" type="ColorRect" parent="UI"]
+anchor_right = 1.0
+margin_bottom = 30.0
+color = Color( 0, 0, 0, 0.501961 )
+
+[node name="Score" type="Label" parent="UI"]
+visible = false
+margin_left = 10.0
+margin_right = 510.0
+margin_bottom = 30.0
+text = "Score:"
+valign = 1
+
+[node name="Time" type="Label" parent="UI"]
+visible = false
+margin_left = 512.0
+margin_right = 1014.0
+margin_bottom = 30.0
+text = "Timer: 00:00"
+align = 2
+valign = 1
+
+[node name="Timer" type="Timer" parent="UI"]
+
+[node name="Dialogue" type="Control" parent="UI"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 8 )
+
+[node name="Background" type="ColorRect" parent="UI/Dialogue"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -53.0
+color = Color( 0, 0, 0, 0.501961 )
+
+[node name="Text" type="RichTextLabel" parent="UI/Dialogue"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -29.0
+margin_bottom = 10.0
+bbcode_enabled = true
+bbcode_text = "[center]Hello, Go shoot the targets.[/center]"
+text = "Hello, Go shoot the targets."
+
+[node name="Drone_container" type="Node" parent="."]
+
+[node name="Drone" parent="." instance=ExtResource( 10 )]
+transform = Transform( 10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 20, 100 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 4 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -20.4108, 32.4433, 0 )
+
+[connection signal="area_entered" from="NPC/Area" to="NPC" method="_on_Area_area_entered"]
+[connection signal="body_entered" from="NPC/Area" to="NPC" method="_on_Area_body_entered"]
+[connection signal="body_exited" from="NPC/Area" to="NPC" method="_on_Area_body_exited"]
+[connection signal="timeout" from="UI/Timer" to="UI" method="_on_Timer_timeout"]
